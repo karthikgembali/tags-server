@@ -3,7 +3,7 @@ import express from 'express';
 import { Tags } from '../models/tags.js';
 import Joi from 'joi';
 import moment from 'moment';
-import { fileUpload } from '../multerConfiguration.js';
+import { fileUpload } from '../config/multerConfiguration.js';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import fs from 'fs';
@@ -17,6 +17,37 @@ export const tagsInputRouter = express.Router();
 // promisify the libreoffice-convert
 const convertAsync = promisify(libre.convert);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Tags Addition and Updation
+ *   description: API endpoints for adding and updating tags
+ * /addTags:
+ *   post:
+ *     tags: [Tags Addition and Updation]
+ *     summary: Add a new tag or update an existing tag
+ *     description: Adds a new tag to the database or updates an existing tag
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tag_name:
+ *                 type: string
+ *                 description: The name of the tag
+ *               tag_code:
+ *                 type: string
+ *                 description: The code of the tag
+ *     responses:
+ *       200:
+ *         description: Tags added/updated successfully
+ *       400:
+ *         description: Invalid Credentials
+ *       500:
+ *         description: Error while adding/updating tags
+ */
 // to add tags
 tagsInputRouter.post('/addTags', async (request, response) => {
     const result = {
@@ -55,6 +86,24 @@ tagsInputRouter.post('/addTags', async (request, response) => {
     return response.send(result)
 });
 
+/**
+ * @swagger
+ * tags:
+ *   name: Fetching Tag Codes and Values
+ *   description: API endpoints for fetching tag codes and values
+ * /fetchTags:
+ *   get:
+ *     tags: [Fetching Tag Codes and Values]
+ *     summary: Get all the tag codes and values
+ *     description: Gets all the tag codes and values from the database
+ *     responses:
+ *       200:
+ *         description: Tag codes and values fetched successfully
+ *       400:
+ *         description: Invalid Credentials
+ *       500:
+ *         description: Error while fetching tag codes and values
+ * */
 // to get all the tags
 tagsInputRouter.get('/fetchTags', async (request, response) => {
     const result = {
@@ -79,6 +128,39 @@ tagsInputRouter.get('/fetchTags', async (request, response) => {
     return response.send(result)
 })
 
+/**
+ * @swagger
+ * tags:
+ *   name: Adding Tag Values
+ *   description: API endpoints for adding tag values
+ * /addTagValues:
+ *   post:
+ *     tags: [Adding Tag Values]
+ *     summary: Add a value to a tag
+ *     description: Adds a value to a tag in the database
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 tag_code:
+ *                   type: string
+ *                   description: The code of the tag
+ *                 tag_value:
+ *                   type: string
+ *                   description: The value to be added to the tag
+ *     responses:
+ *       200:
+ *         description: Value added to tag successfully
+ *       400:
+ *         description: Invalid Credentials
+ *       500:
+ *         description: Error while adding value to tag
+ */
 // to add value to the tags
 tagsInputRouter.post('/addTagValues', async (request, response) => {
     const result = {
@@ -120,6 +202,35 @@ tagsInputRouter.post('/addTagValues', async (request, response) => {
     return response.send(result)
 })
 
+/**
+ * @swagger
+ * tags:
+ *   name: Document Generation
+ *   description: API endpoints for generating documents
+ * /replaceTagsInFile:
+ *   post:
+ *     tags: [Document Generation]
+ *     summary: Generate a document with tags and values
+ *     description: Generates a document with tags and values by reading the file and replacing the tags with values
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The file in which tags are to be replaced
+ *     responses:
+ *       200:
+ *         description: Tags replaced with values successfully
+ *       400:
+ *         description: Invalid Credentials
+ *       500:
+ *         description: Error while replacing tags with values
+ */
 // to read the file and replace tags with values
 tagsInputRouter.post('/replaceTagsInFile', fileUpload.single('file'), async (request, response) => {
     const result = {
