@@ -1,5 +1,6 @@
 // Express Imports
 import express from 'express'; 
+import rateLimit from 'express-rate-limit';
 
 // express instance creation
 export const app = express();
@@ -22,6 +23,25 @@ import { tagsInputRouter } from './routes/tags_input.js'
 
 // Use CORS middleware
 app.use(cors());
+
+// If you're behind a reverse proxy (nginx, render, railway, etc.), this helps rate limiting use the real client IP.
+// Safe default in dev; adjust to match your deployment proxy hop count if needed.
+app.set('trust proxy', 1);
+
+// Global rate limiter (all routes)
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 300, // per IP per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        error: true,
+        message: 'Too many requests, please try again later.'
+    }
+});
+app.use(globalLimiter);
+
 // Middleware to set CORS headers
 app.use((req, res, next) => { 
     res.setHeader('Access-Control-Allow-Origin', '*'); 
