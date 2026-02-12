@@ -7,9 +7,10 @@ export const app = express();
 
 // Other Imports
 import { Model } from 'objection'
-import { knexDatabaseConfiguration } from './databaseConfiguration.js'
+import { knexDatabaseConfiguration } from './config/databaseConfiguration.js'
 import cors from 'cors'
-
+import swaggerUI from 'swagger-ui-express'
+import { swaggerConfiguration } from './config/swaggerConfiguration.js'
 // body-parser 
 import bodyParser from 'body-parser' 
 
@@ -53,6 +54,9 @@ app.use((req, res, next) => {
 
 // parsing body
 app.use(bodyParser.json()); 
+
+// swagger documentation
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerConfiguration))
 
 // establishing knex connection to Objection 
 Model.knex(knexDatabaseConfiguration)

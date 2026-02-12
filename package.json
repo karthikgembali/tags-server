@@ -27,6 +27,8 @@
     "nodemon": "^3.1.10",
     "nvm": "^0.0.4",
     "objection": "^3.1.5",
-    "pizzip": "^3.2.0"
+    "pizzip": "^3.2.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }
