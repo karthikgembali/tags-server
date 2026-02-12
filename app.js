@@ -7,7 +7,8 @@ export const app = express();
 
 // Other Imports
 import { Model } from 'objection'
-import { knexDatabaseConfiguration } from './config/databaseConfiguration.js'
+import { mySqlKnexConfiguration } from './config/mySqlDBConfiguration.js'
+import { mongoDBConfiguration } from './config/mongoDBConfiguration.js'
 import cors from 'cors'
 import swaggerUI from 'swagger-ui-express'
 import { swaggerConfiguration } from './config/swaggerConfiguration.js'
@@ -58,9 +59,13 @@ app.use(bodyParser.json());
 // swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerConfiguration))
 
-// establishing knex connection to Objection 
-Model.knex(knexDatabaseConfiguration)
-
+if (process.env.PREFERRED_DB === 'mysql') { 
+    // establishing mysql connection
+    Model.knex(mySqlKnexConfiguration)
+} else if (process.env.PREFERRED_DB === 'mongodb') {
+    // establishing MongoDB connection
+    app.use(mongoDBConfiguration);
+}
 // Routes SetUp 
 app.use(tagsInputRouter);
 
